@@ -108,28 +108,34 @@ function generatePassword() {
   const valid_lengths = range(8, 128, 1);
 
   var pwLength = parseInt(document.getElementById("char_length").value);
-  console.log(char_length);
-  if (!valid_lengths.includes(pwLength)) {
-    window.alert(
-      "Invalid input.  Please try again.  Please input a password length that is an integer between 8 and 128 characters."
-    );
-    return;
-  }
 
   // whether or not to include lowercase, uppercase, numeric, and/or special characters
   // Check if at least one checkbox is checked without clicking
   // https://stackoverflow.com/a/44559358/9095603
-
   var atLeastOneCheckboxIsChecked =
     document.querySelectorAll('input[type="checkbox"]:checked').length > 0;
-  // console.log(atLeastOneCheckboxIsChecked)
+  // The full set of chosen_char_types is ['abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ','0123456789','@%+\/'!#$^?:,)(}{][~-_.']
+  // The user will choose some subset of this array
 
-  if (!atLeastOneCheckboxIsChecked) {
+  if (!valid_lengths.includes(pwLength) && atLeastOneCheckboxIsChecked) {
+    window.alert(
+      "Invalid input.  Please try again.  Please input a password length that is an integer between 8 and 128 characters."
+    );
+    return;
+  } else if (valid_lengths.includes(pwLength) && !atLeastOneCheckboxIsChecked) {
     window.alert(
       "Invalid input.  Please try again.  You need to select at least one character type."
     );
     return;
-  } else {
+  } else if (
+    !valid_lengths.includes(pwLength) &&
+    !atLeastOneCheckboxIsChecked
+  ) {
+    window.alert(
+      "Invalid inputs.  Please try again.  You need a password length that is an integer between 8 and 128 characters AND you need to select at least one character type."
+    );
+    return;
+  } else if (valid_lengths.includes(pwLength) && atLeastOneCheckboxIsChecked) {
     var lowercasePref = document.getElementById("lowercase").checked;
     var uppercasePref = document.getElementById("uppercase").checked;
     var numericPref = document.getElementById("numeric").checked;
@@ -153,9 +159,6 @@ function generatePassword() {
       chosen_char_types.push(specialCharacters);
     }
   }
-
-  // The full set of chosen_char_types is ['abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ','0123456789','@%+\/'!#$^?:,)(}{][~-_.']
-  // The user will choose some subset of this array
 
   let password = "";
 
